@@ -30,4 +30,9 @@ export class CategoriesService {
 
     return this.categoriesRepository.update(category.id, createCategoryDto);
   }
+
+  async remove(id: string): Promise<void> {
+    const category = await this.findOne(id);
+    await this.categoriesRepository.remove(category);
+  }
 }
