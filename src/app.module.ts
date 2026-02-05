@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/entities/categories.entity';
+import { Product } from './products/entities/products.entity';
+import { ProductsModule } from './products/products.module';
+import { ProductsService } from './products/products.service';
 import { User } from './users/entities/user.entity';
 import { UserModule } from './users/user.module';
 
@@ -19,7 +22,7 @@ import { UserModule } from './users/user.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Category],
+      entities: [User, Category, Product],
       synchronize: false,
       autoLoadEntities: true,
       migrations: ['dist/database/migrations/*.js'],
@@ -28,8 +31,9 @@ import { UserModule } from './users/user.module';
     AuthModule,
     CategoriesModule,
     CategoriesModule,
+    ProductsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ProductsService],
 })
 export class AppModule {}
