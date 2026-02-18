@@ -8,7 +8,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/entities/categories.entity';
 import { Product } from './products/entities/products.entity';
 import { ProductsModule } from './products/products.module';
-import { ProductsService } from './products/products.service';
+import { UploadsModule } from './uploads/uploads.module';
 import { User } from './users/entities/user.entity';
 import { UserModule } from './users/user.module';
 
@@ -30,10 +30,10 @@ import { UserModule } from './users/user.module';
     UserModule,
     AuthModule,
     CategoriesModule,
-    CategoriesModule,
     ProductsModule,
+    UploadsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ProductsService],
+  providers: [AppService],
 })
 export class AppModule {}

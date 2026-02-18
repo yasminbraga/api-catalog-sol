@@ -23,6 +23,9 @@ export class Product {
   @Column()
   imageUrl: string;
 
+  @Column()
+  imageKey: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
