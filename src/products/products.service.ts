@@ -1,10 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/categories/entities/categories.entity';
+import { CategoriesService } from 'src/categories/categories.service';
 import { UploadService } from 'src/uploads/upload.service';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,21 +11,28 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    private readonly categoriesService: CategoriesService,
     private readonly uploadService: UploadService,
   ) {}
 
   async findOne() {}
-  async findByCategory() {}
+  async findAllByCategory(categoryId: string) {
+    try {
+      const foundCategory = await this.categoriesService.findOne(categoryId);
+
+      const productsByCategory = await this.productsRepository.findBy({
+        category: { id: foundCategory.id },
+      });
+      return productsByCategory;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Erro ao encontrar produtos');
+    }
+  }
   async create(createProductDto: CreateProductDto, file: Express.Multer.File) {
     try {
       const { name, price, categoryId } = createProductDto;
-      const category = await this.categoryRepository.findOneBy({
-        id: categoryId,
-      });
-
-      if (!category) throw new NotFoundException('Categoria não encontrada');
+      const category = await this.categoriesService.findOne(categoryId);
 
       const { publicUrl, key } = await this.uploadService.uploadFile(file);
 

@@ -1,5 +1,9 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,6 +25,17 @@ export class UploadService {
 
   async uploadFile(file: Express.Multer.File) {
     try {
+      if (!file) throw new BadRequestException('Nenhum arquivo mandado');
+
+      const allowedMimeTypes = ['image/jpeg', 'image/png'];
+      if (!allowedMimeTypes.includes(file.mimetype))
+        throw new BadRequestException('Tipo inválido de arquivo');
+
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new BadRequestException('Arquivo muito grande');
+      }
+
       const key = `${uuidv4()}-${file.originalname}`;
       await this.s3Client.send(
         new PutObjectCommand({
