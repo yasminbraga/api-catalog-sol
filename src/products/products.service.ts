@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { UploadService } from 'src/uploads/upload.service';
@@ -15,7 +19,11 @@ export class ProductsService {
     private readonly uploadService: UploadService,
   ) {}
 
-  async findOne() {}
+  async findOne(id: string): Promise<Product> {
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) throw new NotFoundException('Produto não encontrado');
+    return product;
+  }
   async findAllByCategory(categoryId: string) {
     try {
       const foundCategory = await this.categoriesService.findOne(categoryId);
@@ -50,6 +58,29 @@ export class ProductsService {
       throw new InternalServerErrorException('Erro ao criar produto');
     }
   }
-  async update() {}
-  async remove() {}
+  async update(
+    id: string,
+    updateProductDto: Partial<Product>,
+    file?: Express.Multer.File,
+  ) {
+    const product = await this.findOne(id);
+
+    if (file) {
+      await this.uploadService.removeFile(product.imageKey);
+      const { publicUrl, key } = await this.uploadService.uploadFile(file);
+      updateProductDto = {
+        ...updateProductDto,
+        imageKey: key,
+        imageUrl: publicUrl,
+      };
+    }
+
+    return this.productsRepository.update(product.id, updateProductDto);
+  }
+  async remove(id: string): Promise<void> {
+    const product = await this.findOne(id);
+    await this.uploadService.removeFile(product.imageKey);
+
+    await this.productsRepository.remove(product);
+  }
 }

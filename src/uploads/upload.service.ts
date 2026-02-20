@@ -1,4 +1,9 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import {
   BadRequestException,
   Injectable,
@@ -52,6 +57,27 @@ export class UploadService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Erro ao fazer upload da imagem');
+    }
+  }
+
+  async removeFile(key: string) {
+    try {
+      await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+        }),
+      );
+
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Erro ao deletar imagem');
     }
   }
 
