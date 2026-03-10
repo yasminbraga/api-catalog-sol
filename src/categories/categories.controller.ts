@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
@@ -35,5 +37,22 @@ export class CategoriesController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.categoriesService.remove(id);
+  }
+
+  @Get(':id/products')
+  async findCategoryProducts(@Param('id') id: string) {
+    return this.categoriesService.findCategoryProducts(id);
+  }
+
+  @Get(':id/products/pdf')
+  async generatePdf(@Res() res: Response, @Param('id') id: string) {
+    const pdf = await this.categoriesService.generatePdf(id);
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=produtos.pdf',
+    });
+
+    res.end(pdf);
   }
 }
