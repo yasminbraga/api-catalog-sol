@@ -38,7 +38,9 @@ export class Product {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Category, { nullable: false })
+  @ManyToOne(() => Category, (category) => category.products, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 }

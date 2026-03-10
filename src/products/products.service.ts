@@ -24,19 +24,6 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Produto não encontrado');
     return product;
   }
-  async findAllByCategory(categoryId: string) {
-    try {
-      const foundCategory = await this.categoriesService.findOne(categoryId);
-
-      const productsByCategory = await this.productsRepository.findBy({
-        category: { id: foundCategory.id },
-      });
-      return productsByCategory;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException('Erro ao encontrar produtos');
-    }
-  }
   async create(createProductDto: CreateProductDto, file: Express.Multer.File) {
     try {
       const { name, price, categoryId } = createProductDto;

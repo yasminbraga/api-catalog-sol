@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/entities/categories.entity';
+import { PdfModule } from './pdf/pdf.module';
 import { Product } from './products/entities/products.entity';
 import { ProductsModule } from './products/products.module';
 import { UploadsModule } from './uploads/uploads.module';
@@ -32,6 +33,7 @@ import { UserModule } from './users/user.module';
     CategoriesModule,
     ProductsModule,
     UploadsModule,
+    PdfModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
   Post,
@@ -25,11 +24,6 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
   ) {
     return this.productsService.create(createProductDto, file);
-  }
-
-  @Get(':categoryId')
-  async getAllByCategory(@Param('categoryId') categoryId: string) {
-    return this.productsService.findAllByCategory(categoryId);
   }
 
   @Delete(':id')
